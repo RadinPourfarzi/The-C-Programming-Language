@@ -1,15 +1,5 @@
 #include <stdio.h>
 
-void reverse(char *);
-
-int main(int argc, char *argv[])
-{
-    char line[100] = "This is my line!";
-    reverse(line);
-    printf("%s\n", line);
-    return 0;
-}
-
 void reverse(char *s)
 {
     char tmp;

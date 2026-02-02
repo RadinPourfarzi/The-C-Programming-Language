@@ -1,19 +1,21 @@
 #include <stdio.h>
 #include <string.h>
 
-void reverse(char *source);
+extern void reverse(char *s);
+void itoa(int n, char *s);
 
 int main(int argc, char *argv[])
 {
-    char name[20] = "hello";
-    reverse(name);
-    printf("%s\n", name);
+    char values[1000];
+    int num = 12345;
+    itoa(num, values);
+    printf("%s\t%d\n", values, num);
     return 0;
 }
-
 void itoa(int n, char *s)
 {
     int sign;
+    char *head = s;
     if((sign = n) < 0)
         n = -n;
     do {
@@ -22,10 +24,5 @@ void itoa(int n, char *s)
     if(sign < 0)
         *s++ = '-';
     *s = '\0';
-}
-
-void reverse(char *s)
-{
-    char *t = s;
-    printf("%s\n", t);
+    reverse(head);
 }
