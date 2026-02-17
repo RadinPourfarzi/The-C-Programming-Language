@@ -6,16 +6,16 @@
 #define MAX_SIZE        1000
 
 struct wnode {
-    char *word;
-    struct wnode *left;
-    struct wnode *right;
+    char *word;              // full identifier
+    struct wnode *left;      // left child (alphabetically smaller)
+    struct wnode *right;     // right child (alphabetically larger)
 };
 
 struct pnode {
-    char *prefix;
-    struct wnode *words;
-    struct pnode *left;
-    struct pnode *right;
+    char *prefix;            // first N characters of a word
+    struct wnode *words;     // BST of full identifiers sharing this prefix
+    struct pnode *left;      // left child (alphabetically smaller)
+    struct pnode *right;     // right child (alphabetically larger)
 };
 
 int getword(char *, int);
@@ -45,12 +45,21 @@ int main(int argc, char **argv)
     return 0;
 }
 
+/*
+   Returns total number of words in a word BST.
+   Used to determine whether a prefix group has >1 identifiers.
+*/
+
 int countwords(struct wnode *head)
 {
     if (head == NULL)
         return 0;
     return 1 + countwords(head->left) + countwords(head->right);
 }
+
+/*
+   Prints full identifiers alphabetically.
+*/
 
 void printwtree(struct wnode *head)
 {
@@ -61,12 +70,17 @@ void printwtree(struct wnode *head)
     printwtree(head->right);
 }
 
+/*
+   Traverses prefix BST alphabetically.
+   Only prints groups that contain more than one word.
+*/
+
 void printptree(struct pnode *head)
 {
     if(head == NULL)
         return;
     printptree(head->left);
-    if(countwords(head->words) > 1) {
+    if(countwords(head->words) > 1) {   // Only print groups with more than one identifier
         printf("Group (prefix: %s):\n", head->prefix);
         printwtree(head->words);
         printf("\n");
@@ -74,18 +88,27 @@ void printptree(struct pnode *head)
     printptree(head->right);
 }
 
+/*
+   Reads next word from input.
+   Uses getch/ungetch for one-character pushback.
+
+   Returns:
+       - EOF on end of file
+       - first character of word otherwise
+*/
+
 int getword(char *word, int lim)
 {
     int c, getch(void);
     void ungetch(int);
     char *w = word;
 
-    while (isspace(c = getch()))
+    while (isspace(c = getch())) // Skip whitespace
         ;
     if (c == EOF)
         return EOF;
     *w++ = c;
-    if (!isalpha(c)) {
+    if (!isalpha(c)) { // If not alphabetic, return single-character token
         *w = '\0';
         return c;
     }
@@ -97,6 +120,11 @@ int getword(char *word, int lim)
     *w = '\0';
     return word[0];
 }
+
+/*
+   Inserts word into prefix BST.
+   If prefix already exists, insert word into its word BST.
+*/
 
 struct pnode *addptree(struct pnode *h, char *word, int size)
 {
@@ -120,6 +148,11 @@ struct pnode *addptree(struct pnode *h, char *word, int size)
     return h;
 }
 
+/*
+   Standard BST insertion using strcmp.
+   Keeps words alphabetically ordered.
+*/
+
 struct wnode *addwtree(struct wnode *h, char *word)
 {
     int cond;
@@ -137,6 +170,7 @@ struct wnode *addwtree(struct wnode *h, char *word)
     return h;
 }
 
+/* Memory allocation helpers */
 struct pnode *palloc()
 {
     return (struct pnode *)(malloc(sizeof(struct pnode)));
