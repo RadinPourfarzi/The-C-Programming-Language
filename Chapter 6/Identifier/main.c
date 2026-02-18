@@ -18,6 +18,17 @@ struct pnode {
     struct pnode *right;     // right child (alphabetically larger)
 };
 
+char *keywords[] = {
+    "auto", "break", "case", "char", "const", "continue",
+    "default", "do", "double", "else", "enum", "extern",
+    "float", "for", "goto", "if", "int", "long",
+    "register", "return", "short", "signed", "sizeof",
+    "static", "struct", "switch", "typedef", "union",
+    "unsigned", "void", "volatile", "while"
+};
+
+#define NKEYS (int)(sizeof(keywords)/sizeof(keywords[0]))
+
 int getword(char *, int);
 struct pnode *addptree(struct pnode *, char *, int);
 struct wnode *addwtree(struct wnode *, char *);
@@ -29,6 +40,7 @@ char *my_strncpy(char *, const char *, int );
 int countwords(struct wnode *);
 void printwtree(struct wnode *);
 void printptree(struct pnode *);
+int iskeyword(char *word);
 
 int main(int argc, char **argv)
 {
@@ -39,7 +51,7 @@ int main(int argc, char **argv)
     struct pnode *head = NULL;
     char word[MAX_SIZE];
     while(getword(word, MAX_SIZE) != EOF)
-        if(isalpha(word[0]))
+        if(isalpha(word[0]) && !iskeyword(word))
             head = addptree(head, word, N);
     printptree(head);
     return 0;
@@ -99,26 +111,46 @@ void printptree(struct pnode *head)
 
 int getword(char *word, int lim)
 {
-    int c, getch(void);
+    int c, getch(void), isComStrChar(int);
     void ungetch(int);
     char *w = word;
-
-    while (isspace(c = getch())) // Skip whitespace
-        ;
-    if (c == EOF)
-        return EOF;
+    while(1==1) {
+        if ((c = getch()) == EOF)
+            return EOF;
+        int cond = isComStrChar(c);
+        if(cond)
+            continue;
+        if(!isspace(c)) // Skip whitespace
+            break;
+    }
     *w++ = c;
     if (!isalpha(c)) { // If not alphabetic, return single-character token
         *w = '\0';
         return c;
     }
-    for( ; --lim > 0; w++)
-        if (!isalnum(*w = getch())) {
-            ungetch(*w);
-            break; 
+   while (--lim > 0) {
+        if ((c = getch()) == EOF)
+            break;
+        if (isComStrChar(c) || !isalnum(c)) {
+            ungetch(c);
+            break;
         }
+        *w++ = c;
+    }
     *w = '\0';
     return word[0];
+}
+
+/*
+    Checks if word is in list of known Keywords.
+*/
+
+int iskeyword(char *word)
+{
+    for (int i = 0; i < NKEYS; i++)
+        if (strcmp(word, keywords[i]) == 0)
+            return 1;
+    return 0;
 }
 
 /*
@@ -230,4 +262,59 @@ void ungetch(int c)
         printf("ungetch: too many characters\n");
     else
         buf[bufp++] = c;
+}
+
+#define NORMAL      0
+#define IN_COMMENT  1
+#define IN_STRING   2
+#define IN_CHAR     3
+
+#define TRUE        (1==1)
+#define FALSE       (!TRUE)
+
+int isComStrChar(int c)
+{
+    static int prev = 0;
+    static int state = NORMAL;
+    static int escaped = FALSE;
+
+    if(state == NORMAL) {
+        if(c == '*' && prev == '/') {
+            state = IN_COMMENT;
+            prev = 0;
+        }
+        else {
+            if(c == '"') {
+                state = IN_STRING;
+                escaped = FALSE;
+            }
+            else if(c == '\'') {
+                state = IN_CHAR;
+                escaped = FALSE;
+            }
+        }
+        prev = c;
+        return FALSE;
+    }
+    else if(state == IN_COMMENT) {
+        if (prev == '*' && c == '/')
+            state = NORMAL;
+        prev = c;
+        return TRUE;
+    }
+    else if(state == IN_STRING) {
+        if (c == '"' && !escaped)
+            state = NORMAL;
+        escaped = (c == '\\' && !escaped);
+        return TRUE;
+    }
+    else if(state == IN_CHAR) {
+        if (c == '\'' && !escaped)
+            state = NORMAL;
+        escaped = (c == '\\' && !escaped);
+        return TRUE;
+    }
+
+    prev = c;
+    return FALSE;
 }
