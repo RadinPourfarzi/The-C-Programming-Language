@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define HASHSIZE 101
+#define HASHSIZE        101
+#define MAX_SIZE        1000
 
 struct nlist *install(char *, char *);
 struct nlist *lookup(char *);
 unsigned int hash(char *);
+int getword(char *, int);
 
 struct nlist {
     struct nlist *next;
@@ -85,4 +87,46 @@ struct nlist *install(char *name, char *defn)
         return NULL;
 
     return np;
+}
+
+int getword(char *word, int lim)
+{
+    int c, getch(void);
+    void ungetch(int);
+
+    char *w = word;
+    while (isspace(c = getch()))
+        ;
+    if (c != EOF)
+        *w++ = c;
+    if (!isalpha(c)) {
+        *w = '\0';
+        return c;
+    }
+    for ( ; --lim > 0; w++) {
+        if (!isalnum(*w = getch())) {
+            ungetch(*w);
+            break;
+        }
+    }
+    *w = '\0';
+    return word[0];
+}
+
+#define BUFSIZE 100
+
+char buf[BUFSIZE];
+int bufp = 0;
+
+int getch(void)
+{
+    return (bufp > 0) ? buf[--bufp] : getchar();
+}
+
+void ungetch(int c)
+{
+    if (bufp >= BUFSIZE)
+        printf("ungetch: too many characters\n");
+    else
+        buf[bufp++] = c;
 }
