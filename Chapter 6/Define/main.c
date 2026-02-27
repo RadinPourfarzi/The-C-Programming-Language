@@ -9,6 +9,7 @@ struct nlist *install(char *, char *);
 struct nlist *lookup(char *);
 unsigned int hash(char *);
 int getword(char *, int);
+int getdefine(int lim);
 
 struct nlist {
     struct nlist *next;
@@ -20,6 +21,27 @@ static struct nlist *hashtab[HASHSIZE];
 
 int main(int argc, char **argv)
 {
+    char word[MAX_SIZE], nextword[MAX_SIZE];
+    struct nlist *np = (struct nlist*)(malloc(sizeof(struct nlist)));
+
+    while(getword(word, MAX_SIZE) != EOF) {
+        if(word[0] == '#') {
+            getword(nextword, MAX_SIZE);
+            if(strcmp(nextword, "define") == 0)
+                getdefine(MAX_SIZE);
+            else
+                if((np = lookup(nextword)) != NULL)
+                    printf("%s", np->defn);
+                else
+                    printf("%s", nextword);
+            continue;
+        }
+        if((np = lookup(word)) != NULL)
+            printf("%s", np->defn);
+        else
+            printf("%s", word);
+    }
+
     return 0;
 }
 
@@ -89,6 +111,33 @@ struct nlist *install(char *name, char *defn)
     return np;
 }
 
+int getdefine(int lim)
+{
+    int c, getch(void);
+    void ungetch(int);
+    char defn[MAX_SIZE], name[MAX_SIZE];
+
+    getword(name, lim);
+
+    char *d = defn;
+    while (isspace(c = getch()))
+        ;
+    if (c != EOF)
+        *d++ = c;
+    while((c = getch()) != EOF) {
+        if(c == '\n') {
+            ungetch('\n');
+            break;
+        }
+        *d++ = c;
+    }
+    *d = '\0';
+    printf("#define %s %s\n", name, defn);
+    if(install(name, defn) != NULL)
+        return 1;
+    return 0;
+}
+
 int getword(char *word, int lim)
 {
     int c, getch(void);
@@ -103,12 +152,11 @@ int getword(char *word, int lim)
         *w = '\0';
         return c;
     }
-    for ( ; --lim > 0; w++) {
+    for ( ; --lim > 0; w++)
         if (!isalnum(*w = getch())) {
             ungetch(*w);
             break;
         }
-    }
     *w = '\0';
     return word[0];
 }
