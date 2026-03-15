@@ -1,18 +1,22 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
-TARGET = main
 
-SRC = $(wildcard *.c)
-OBJ = $(SRC:.c=.o)
+PROGRAMS = main pipe
+#COMMON = util.o io.o
 
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
+all: $(PROGRAMS:%=%.exe)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+main.exe: main.o $(COMMON)
+	$(CC) $(CFLAGS) $^ -o $@
+
+pipe.exe: pipe.o $(COMMON)
+	$(CC) $(CFLAGS) $^ -o $@
+
+run: all
+	.\main.exe
 
 clean:
-	del $(OBJ) $(TARGET)
-
-debug: CFLAGS += -g
-debug: $(TARGET)
-
-run: $(TARGET)
-	./$(TARGET)
+	del /Q *.o *.exe 2>nul
