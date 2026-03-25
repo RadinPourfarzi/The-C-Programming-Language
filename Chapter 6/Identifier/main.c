@@ -117,8 +117,7 @@ int getword(char *word, int lim)
     while(1==1) {
         if ((c = getch()) == EOF)
             return EOF;
-        int cond = isComStrChar(c);
-        if(cond)
+        if(isComStrChar(c))
             continue;
         if(!isspace(c)) // Skip whitespace
             break;
@@ -128,7 +127,7 @@ int getword(char *word, int lim)
         *w = '\0';
         return c;
     }
-   while (--lim > 0) {
+    while (--lim > 0) {
         if ((c = getch()) == EOF)
             break;
         if (isComStrChar(c) || !isalnum(c)) {
