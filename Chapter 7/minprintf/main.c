@@ -1,3 +1,5 @@
+//Unfinished
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -45,6 +47,7 @@ void minprintf(char *fmt, ...)
     va_end(ap);   /* clean up when done */
 }
 
+/*
 int descriptor_parser(char *input, int *precision, int *width, int *left_adj, char *type, int *width_given, int *precision_given)
 {
     *precision = *width = *left_adj = 0;
@@ -115,24 +118,5 @@ int descriptor_parser(char *input, int *precision, int *width, int *left_adj, ch
             break;
     }
     return 101;     //return to signify argument parsed correctly (something was found between '%' and a type specifier)
-}
-
-/*
-char *create_formatstring(int precision, int width, int left_adj)
-{
-    char *fmtstr, s_fmtstr;
-
-    if((fmtstr = (char *)malloc(11 * sizeof(*fmtstr))) == NULL)
-        exit(0);
-    s_fmtstr = fmtstr;
-    *fmtstr++ = '%';
-    if(left_adj)
-        *fmtstr++ = '-';
-    *fmtstr = '\0';
-    if(width > -1)
-        strcat(fmtstr, itoa(width));
-    if(precision > -1)
-        strcat(fmtstr, itoa(precision));
-    return s_fmtstr;
 }
 */
