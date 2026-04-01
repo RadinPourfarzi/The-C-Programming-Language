@@ -9,7 +9,7 @@ int main()
 {
     int i;
     char str[1000];
-    minscanf("Please enter: %s", &str);
+    minscanf("Please enter: %s", str);
     printf("%s", str);
     return 0;
 }
@@ -76,12 +76,12 @@ int getword(char *word, int lim)
         ;
     if (c != EOF)
         *w++ = c;
-    for ( ; --lim > 0; w++)
-        if ((*w = getch()) == EOF || isspace(*w)) {
-            w--;
-            ungetch(*w);
+    while(--lim > 0) {
+        if ((c = getch()) == EOF || isspace(c) || c == 26)
             break;
-        }
+        *w = c;
+        w++;
+    }
     *w = '\0';
     return word[0];
 }
