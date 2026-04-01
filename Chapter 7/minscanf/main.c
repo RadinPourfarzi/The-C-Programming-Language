@@ -9,7 +9,7 @@ int main()
 {
     int i;
     char str[1000];
-    minscanf("Please enter digit: %s", &str);
+    minscanf("Please enter: %s", &str);
     printf("%s", str);
     return 0;
 }
@@ -43,8 +43,12 @@ void minscanf(char *fmt, ...)
             dbval = va_arg(ap, double*);
             *dbval = 0;
             c = 0;
-            for(c = getchar(); c != EOF && c != ' ' && c != '\n'; )
-                *dbval = *dbval * 10.0 + (c - '0');
+            while(isspace(c=getchar()))
+                ;
+            while(c != EOF  && isdigit(c)) {
+                *dbval = *dbval * 10 + (c - '0');
+                c = getchar();
+            }
             break;
         case 's':
             str = va_arg(ap, char*);
