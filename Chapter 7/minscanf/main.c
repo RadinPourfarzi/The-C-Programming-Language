@@ -78,6 +78,7 @@ int getword(char *word, int lim)
         *w++ = c;
     for ( ; --lim > 0; w++)
         if ((*w = getch()) == EOF || isspace(*w)) {
+            w--;
             ungetch(*w);
             break;
         }
