@@ -1,6 +1,4 @@
 #include <stdlib.h>
-#include <fcntl.h>
-#include <io.h>
 #include "buffer.h"
 
 FileBuffer file_reader = {NULL, 0, 0};

@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
 
 #ifndef BUFFER_H
 #define BUFFER_H
