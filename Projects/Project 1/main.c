@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "buffer.h"
+#include "search.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,11 +15,13 @@ int main(int argc, char *argv[])
         perror("Error opening file");
         return -1;
     }
-    
+
     start_buffer();
     
-    while((status = get_line(fd)) > 0)
-        printf("[Len: %zu | Cap: %zu] %s", file_reader.size, file_reader.mem_cap, file_reader.buffer);
+    while((status = get_line(fd)) > 0) {
+        if(strcontains(file_reader.buffer, "Verse"))
+            printf("[Len: %zu | Cap: %zu] %s", file_reader.size, file_reader.mem_cap, file_reader.buffer);
+    }
     
     close(fd);
     free_buffer();

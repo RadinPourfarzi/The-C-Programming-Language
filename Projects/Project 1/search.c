@@ -3,7 +3,7 @@
 int strcontains(const char *haystack, const char *needle)
 {
     if(*needle == '\0')
-        return (char *)haystack;
+        return 0;
 
     for(; *haystack != '\0'; haystack++) {
         if(*haystack == *needle) {
