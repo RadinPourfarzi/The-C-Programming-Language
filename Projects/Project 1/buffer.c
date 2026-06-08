@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "buffer.h"
 
 FileBuffer file_reader = {NULL, 0, 0};
@@ -28,10 +29,12 @@ void free_buffer(void)
 int get_line(int fd)
 {
     file_reader.size = 0;
-    char *new_buffer = NULL;
+    char *new_buffer;
     unsigned int new_mem_cap;
     char c;
     unsigned int bytes_read;
+
+    new_buffer = NULL;
 
     while((bytes_read = read(fd, &c, 1)) > 0) {
         if(file_reader.size + 1 > file_reader.mem_cap) {

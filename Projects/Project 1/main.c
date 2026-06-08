@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
         perror("Error opening file");
         return -1;
     }
-
+    
     start_buffer();
     
     while((status = get_line(fd)) > 0)
