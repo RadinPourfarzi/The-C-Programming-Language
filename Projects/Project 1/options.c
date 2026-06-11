@@ -1,37 +1,88 @@
 #include "options.h"
 #include <ctype.h>
+#include <stdio.h>
 
-static int flags = 0;
+arg_CO arg_manager = {0, 0};
 
-int check_options(char *arguments)
+void read_flags()
+{
+    printf("\n\t__Conditions Checking__\n");
+    if((arg_manager.conditions & GIVEN_PATTERN) == GIVEN_PATTERN)
+        printf("Given Pattern__\n");
+    if((arg_manager.conditions & GIVEN_OPTION) == GIVEN_OPTION)
+        printf("Given Option(s)__\n");
+    if((arg_manager.conditions & GIVEN_FILES) == GIVEN_FILES)
+        printf("Given File(s)__\n");
+
+    printf("\n\t__Options Checking__\n");
+    if((arg_manager.flags & IGNORE_CASE) == IGNORE_CASE)
+        printf("__Ignore Case\n");
+    if((arg_manager.flags & INVERT_MATCH) == INVERT_MATCH)
+        printf("__Invert Match\n");
+    if((arg_manager.flags & LINE_NUMBERS) == LINE_NUMBERS)
+        printf("__Line Numbers\n");
+    if((arg_manager.flags & COUNT_MATCHES) == COUNT_MATCHES)
+        printf("__Count Matches\n");
+    
+}
+
+int check_condition(int argument_count, char *arguments[])
+{
+    int index;
+
+    index = 0;
+    if(argument_count == 1)
+        return (arg_manager.conditions = 0);
+    index++;
+    if(*arguments[index] != '-') {
+        arg_manager.conditions |= GIVEN_PATTERN;
+        arg_manager.pattern = arguments[index++];
+    }
+    if(index >= argument_count)
+        return 0;
+    if(check_options(arguments[index++]) == ERROR_O) {
+        perror("Non proper option!\n");
+        return -1;
+    }
+    if(index >= argument_count)
+        return 0;
+    if(arg_manager.flags != 0)
+        arg_manager.conditions |= GIVEN_OPTION;
+    if(check_file(arguments[index]))
+        arg_manager.conditions |= GIVEN_FILES;
+
+    return 0;
+}
+
+int check_options(char *argument)
 {
     char *s;
     
-    s = arguments;
+    s = argument;
 
     if(*s++ != '-')
-        return (flags = -1);
+        return (arg_manager.flags = 0);
     while(*s != '\0') {
         switch(*s) {
             case 'i':
-                flags |= IGNORE_CASE;
+                arg_manager.flags |= IGNORE_CASE;
                 break;
             case 'v':
-                flags |= INVERT_MATCH;
+                arg_manager.flags |= INVERT_MATCH;
                 break;
             case 'n':
-                flags |= LINE_NUMBERS;
+                arg_manager.flags |= LINE_NUMBERS;
                 break;
             case 'c':
-                flags |= COUNT_MATCHES;
+                arg_manager.flags |= COUNT_MATCHES;
                 break;
             default:
-                flags |= ERROR;
-                return flags;
+                arg_manager.flags |= ERROR_O;
+                return arg_manager.flags;
         }
         s++;
     }
-    return flags;
+    return arg_manager.flags;
 }
 
 int check_file(char *filename)

@@ -12,10 +12,14 @@ int main(int argc, char *argv[])
 {
     int fd, status, flags;
 
+    check_condition(argc, argv);
+    printf("%d, %d, %s\n", arg_manager.conditions, arg_manager.flags, arg_manager.pattern);
+    read_flags();
+    return 0;
     if(argc < 2)
         fd = 1;
     else {
-        if((flags = check_options(argv[1])) == ERROR) {
+        if((flags = check_options(argv[1])) == ERROR_O) {
             perror("Non proper option!\n");
             return -1;
         }
