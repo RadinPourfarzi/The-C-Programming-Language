@@ -15,4 +15,4 @@ debug: CFLAGS += -g
 debug: $(TARGET)
 
 run: $(TARGET)
-	./$(TARGET)
+	./$(TARGET) Verse -c File1.txt
