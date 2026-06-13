@@ -2,9 +2,12 @@
 #define OPTIONS_H
 
 struct argument_conditions_options {
-    int flags;
+    int options;
     int conditions;
-    const char *pattern;
+    char *pattern;
+    char *pattern_file;
+    int first_file;
+    int file_count;
 };
 typedef struct argument_conditions_options arg_CO;
 
@@ -25,9 +28,7 @@ extern enum condition_flags {
     ERROR_C         = 020
 };
 
-int check_condition(int argument_count, char *arguments[]);
+int read_arguments(int argument_count, char *arguments[]);
 void read_flags();
-int check_options(char *arguments);
-int check_file(char *filename);
 
 #endif

@@ -32,7 +32,7 @@ int get_line(int fd)
     char *new_buffer;
     unsigned int new_mem_cap;
     char c;
-    unsigned int bytes_read;
+    int bytes_read;
 
     new_buffer = NULL;
 
