@@ -13,7 +13,7 @@ typedef struct argument_conditions_options arg_CO;
 
 extern arg_CO arg_manager;
 
-extern enum option_flags {
+enum option_flags {
     IGNORE_CASE     = 01,
     INVERT_MATCH    = 02,
     LINE_NUMBERS    = 04,
@@ -21,7 +21,7 @@ extern enum option_flags {
     ERROR_O         = 020
 };
 
-extern enum condition_flags {
+enum condition_flags {
     GIVEN_PATTERN   = 01,
     GIVEN_OPTION    = 02,
     GIVEN_FILES     = 04,

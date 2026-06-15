@@ -1,4 +1,6 @@
 #include "search.h"
+#include <ctype.h>
+#include <stdio.h>
 
 int strcontains(const char *haystack, const char *needle)
 {
@@ -16,6 +18,29 @@ int strcontains(const char *haystack, const char *needle)
                 n++;
             }
         
+            if(*n == '\0')
+                return (1==1);
+        }
+    }
+    return !(1==1);
+}
+
+int nocase_strcontains(const char *haystack, const char *needle)
+{
+    if(*needle == '\0')
+        return 1;
+
+    for(; *haystack != '\0'; haystack++) {
+        if(tolower(*haystack) == tolower(*needle)) {
+            const char *h, *n;
+            h = haystack;
+            n = needle;
+
+            while(*h != '\0' && *n != '\0' && tolower(*h) == tolower(*n)) {
+                h++;
+                n++;
+            }
+
             if(*n == '\0')
                 return (1==1);
         }

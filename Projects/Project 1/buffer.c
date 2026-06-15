@@ -28,12 +28,12 @@ void free_buffer(void)
 
 int get_line(int fd)
 {
-    file_reader.size = 0;
     char *new_buffer;
     unsigned int new_mem_cap;
     char c;
     int bytes_read;
 
+    file_reader.size = 0;
     new_buffer = NULL;
 
     while((bytes_read = read(fd, &c, 1)) > 0) {
@@ -51,7 +51,13 @@ int get_line(int fd)
         if(c == '\n')
             break;
     }
-
+    if(file_reader.size + 1 > file_reader.mem_cap) {
+        new_mem_cap = file_reader.mem_cap * 2;
+        if((new_buffer = (char *)realloc(file_reader.buffer, new_mem_cap)) == NULL)
+            return -1;
+        file_reader.buffer = new_buffer;
+        file_reader.mem_cap = new_mem_cap;
+    }
     file_reader.buffer[file_reader.size] = '\0';
 
     if(bytes_read < 0)  return -1;
