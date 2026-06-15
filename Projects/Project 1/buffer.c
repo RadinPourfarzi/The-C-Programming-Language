@@ -64,20 +64,3 @@ int get_line(int fd)
     if(bytes_read == 0 && file_reader.size == 0) return 0;
     return 1;
 }
-
-int getword(char *word, int lim, FILE *stream)
-{
-    int c = 0;
-    char *w = word;
-
-    for(c = getc(stream); --lim > 0; c = getc(stream)) {
-        /*printf("%d: %d\n", lim, c);*/
-        if(c == EOF) {
-            ungetc(*w, stream);
-            break;
-        }
-        *w++ = c;
-    }
-    *w = '\0';
-    return word[0];
-}
