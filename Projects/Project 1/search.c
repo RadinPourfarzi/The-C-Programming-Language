@@ -31,12 +31,12 @@ int nocase_strcontains(const char *haystack, const char *needle)
         return 1;
 
     for(; *haystack != '\0'; haystack++) {
-        if(tolower(*haystack) == tolower(*needle)) {
+        if(tolower((unsigned char)*haystack) == tolower((unsigned char)*needle)) {
             const char *h, *n;
             h = haystack;
             n = needle;
 
-            while(*h != '\0' && *n != '\0' && tolower(*h) == tolower(*n)) {
+            while(*h != '\0' && *n != '\0' && tolower((unsigned char)*h) == tolower((unsigned char)*n)) {
                 h++;
                 n++;
             }
