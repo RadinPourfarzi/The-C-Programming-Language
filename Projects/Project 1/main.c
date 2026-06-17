@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
             return -1;
         }
         if((arg_manager.options & COUNT_MATCHES) == COUNT_MATCHES)
-            printf("[%d] matches", lc);
+            printf("[%d] matches\n", lc);
         free_buffer();
     }
     else {
