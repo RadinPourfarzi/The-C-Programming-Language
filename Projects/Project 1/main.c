@@ -17,8 +17,6 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    read_flags();
-
     lc = ln = 0;
     if(!(arg_manager.conditions & GIVEN_FILES)) {
         if(start_buffer() < 0) {
