@@ -18,7 +18,8 @@ enum option_flags {
     INVERT_MATCH    = 02,
     LINE_NUMBERS    = 04,
     COUNT_MATCHES   = 010,
-    ERROR_O         = 020
+    LITERAL_PATTERN = 020,
+    ERROR_O         = 040
 };
 
 enum condition_flags {

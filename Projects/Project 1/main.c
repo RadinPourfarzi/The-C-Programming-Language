@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[])
 {
-    int fd, status, i, match;
+    int fd, status, i, match, l_status;
     unsigned int lc, ln;
 
     if((status = read_arguments(argc, argv)) < 0) {
@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
         return 1;
     }
     
+    read_flags();
+
     lc = ln = 0;
     if(!(arg_manager.conditions & GIVEN_FILES)) {
         if(start_buffer() < 0) {
@@ -24,7 +26,7 @@ int main(int argc, char *argv[])
             free_buffer();
             return 1;
         }
-        while(get_line(0) == 1) {
+        while((l_status = get_line(0)) == 1) {
             ln++;
             match = (!(arg_manager.options & IGNORE_CASE)) ? strcontains(file_reader.buffer, arg_manager.pattern) : nocase_strcontains(file_reader.buffer, arg_manager.pattern);
             if(match != ((arg_manager.options & INVERT_MATCH) == INVERT_MATCH)) {
@@ -36,6 +38,10 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        if(l_status == -1) {
+            fprintf(stderr, "Buffer Failed!\n");
+            return -1;
+        }
         if((arg_manager.options & COUNT_MATCHES) == COUNT_MATCHES)
             printf("[%d] matches", lc);
         free_buffer();
@@ -45,7 +51,7 @@ int main(int argc, char *argv[])
             lc = ln = 0;
             if((fd = open(argv[i], O_RDONLY)) < 0) {
                 fprintf(stderr, "Error opening file \'%s\'\n", argv[i]);
-                return 1;
+                continue;
             }
             if(start_buffer() < 0) {
                 fprintf(stderr, "Error starting buffer\n");
@@ -53,7 +59,7 @@ int main(int argc, char *argv[])
                 close(fd);
                 return 1;
             }
-            while(get_line(fd) == 1) {
+            while((l_status = get_line(fd)) == 1) {
                 ln++;
                 match = (!(arg_manager.options & IGNORE_CASE)) ? strcontains(file_reader.buffer, arg_manager.pattern) : nocase_strcontains(file_reader.buffer, arg_manager.pattern);
                 if(match != ((arg_manager.options & INVERT_MATCH) == INVERT_MATCH)) {
@@ -66,6 +72,10 @@ int main(int argc, char *argv[])
                         printf("%s", file_reader.buffer);
                     }
                 }
+            }
+            if(l_status == -1) {
+                fprintf(stderr, "Buffer Failed!\n");
+                return -1;
             }
             if((arg_manager.options & COUNT_MATCHES) == COUNT_MATCHES) {
                 if(arg_manager.file_count > 1)

@@ -20,7 +20,7 @@ int read_arguments(int argument_count, char *arguments[])
         return -1;
     
     i = 1;
-    while(i < argument_count && arguments[i][0] == '-') {
+    while(i < argument_count && arguments[i][0] == '-' && !(arg_manager.options & LITERAL_PATTERN)) {
         if((check_options(arguments[i]) & ERROR_O) == ERROR_O)
             return -1;
         arg_manager.conditions |= GIVEN_OPTION;
@@ -61,6 +61,9 @@ int check_options(char *options)
             case 'c':
                 arg_manager.options |= COUNT_MATCHES;
                 break;
+            case '-':
+                arg_manager.options |= LITERAL_PATTERN;
+                break;
             default:
                 arg_manager.options |= ERROR_O;
                 return arg_manager.options;
@@ -89,5 +92,6 @@ void read_flags()
         printf("__Line Numbers\n");
     if((arg_manager.options & COUNT_MATCHES) == COUNT_MATCHES)
         printf("__Count Matches\n");
-    
+    if((arg_manager.options & LITERAL_PATTERN) == LITERAL_PATTERN)
+        printf("__Literal Pattern\n");   
 }
