@@ -19,6 +19,15 @@ Tokenizer *init_tokenizer(const char *s)
     return t;
 }
 
+void free_tokenizer(Tokenizer *t)
+{
+    if(t->input != NULL) {
+        free(t->input);
+        t->input = NULL;
+    }
+    t->position = 0;
+}
+
 Token next_token(Tokenizer *t)
 {
     Token tmp;

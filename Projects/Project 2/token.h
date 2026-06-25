@@ -1,7 +1,7 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-#define TZR_POS(t)              ((t)->input[(t)->position])
+#define TZR_POS(tokenizer)              ((tokenizer)->input[(tokenizer)->position])
 
 typedef enum {
     TOKEN_NUMBER,
@@ -30,5 +30,6 @@ typedef struct tokenizer_metadata {
 
 Token next_token(Tokenizer *t);
 Tokenizer *init_tokenizer(const char *s);
+void free_tokenizer(Tokenizer *t);
 
 #endif
