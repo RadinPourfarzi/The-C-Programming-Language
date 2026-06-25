@@ -4,6 +4,12 @@
 
 #define advance(parser)        (parser->current_token = next_token(parser->tokenizer))
 
+AST_Node *parse(Parser *p);
+AST_Node *primary(Parser *p);
+AST_Node *term(Parser *p);
+AST_Node *expression(Parser *p);
+AST_Node *assign(Parser *p);
+
 Parser *init_parser(Tokenizer *t)
 {
     Parser *p;
