@@ -87,11 +87,11 @@ Token next_token(Tokenizer *t)
             t->position++;
             return tmp;
         case '(':
-            tmp.type = TOKEN_RIGHT_PAREN;
+            tmp.type = TOKEN_LEFT_PAREN;
             t->position++;
             return tmp;
         case ')':
-            tmp.type = TOKEN_LEFT_PAREN;
+            tmp.type = TOKEN_RIGHT_PAREN;
             t->position++;
             return tmp;
         default:
