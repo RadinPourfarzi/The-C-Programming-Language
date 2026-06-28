@@ -7,6 +7,7 @@
 
 AST_Node *parse(Parser *p);
 AST_Node *primary(Parser *p);
+AST_Node *unary(Parser *p);
 AST_Node *term(Parser *p);
 AST_Node *expression(Parser *p);
 AST_Node *assign(Parser *p);
@@ -100,7 +101,7 @@ AST_Node *term(Parser *p)
     AST_Node *left;
     AST_Node *right;
 
-    if((left = primary(p)) == NULL)
+    if((left = unary(p)) == NULL)
         return NULL;
 
     while(p->current_token.type == TOKEN_MULTIPLY || p->current_token.type == TOKEN_DIVIDE || p->current_token.type == TOKEN_MODULO) {
@@ -109,7 +110,7 @@ AST_Node *term(Parser *p)
 
         advance(p);
 
-        if((right = primary(p)) == NULL)
+        if((right = unary(p)) == NULL)
             return NULL;
 
         left = create_node(current_t, left, right);
@@ -126,6 +127,27 @@ AST_Node *exponent(Parser *p)
 
     return left;
 } */
+
+AST_Node *unary(Parser *p)
+{
+    AST_Node *node;
+
+    if(p->current_token.type == TOKEN_MINUS) {
+        Token current_t;
+        current_t = p->current_token;
+
+        advance(p);
+
+        if((node = primary(p)) == NULL)
+            return NULL;
+        
+        node = create_node(current_t, node, NULL);
+        
+        return node;
+    }
+
+    return primary(p);
+}
 
 AST_Node *primary(Parser *p)
 {
@@ -158,6 +180,8 @@ AST_Node *primary(Parser *p)
         advance(p);
         return node;
     }
+
+    fprintf(stderr, "[Syntax Error]: Expected Number, Parenthesis, or Variable\nReceived token type %d\n", p->current_token.type);
 
     return node;
 }

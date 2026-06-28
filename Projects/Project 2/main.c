@@ -11,6 +11,8 @@
 #include "evaluate.h"
 #include "buffer.h"
 
+void free_all(FileBuffer *f, Tokenizer *t, Parser *p, AST_Node *h);
+
 int main(int argc, char *argv[])
 {
     Tokenizer *tokenizer;
@@ -37,26 +39,17 @@ int main(int argc, char *argv[])
         }
         if((head = parse(parser)) == NULL) {
             fprintf(stderr, "[Parsing Error]\n");
-            free_buffer(file_reader);
-            free_tokenizer(tokenizer);
-            free_parser(parser);
-            free_ast(head);
+            free_all(file_reader, tokenizer, parser, head);
             continue;
         }
         if(!evaluate(head, &result)) {
             fprintf(stderr, "[calculation error]\n");
-            free_buffer(file_reader);
-            free_tokenizer(tokenizer);
-            free_parser(parser);
-            free_ast(head);
+            free_all(file_reader, tokenizer, parser, head);
             continue;
         }
         printf("%f\n", result);
 
-        free_buffer(file_reader);
-        free_tokenizer(tokenizer);
-        free_parser(parser);
-        free_ast(head);
+        free_all(file_reader, tokenizer, parser, head);
 
         file_reader = start_buffer(&error);
         if(error == -1) {
@@ -66,4 +59,12 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+}
+
+void free_all(FileBuffer *f, Tokenizer *t, Parser *p, AST_Node *h)
+{
+    free_buffer(f);
+    free_tokenizer(t);
+    free_parser(p);
+    free_ast(h);
 }

@@ -21,7 +21,17 @@ int evaluate(AST_Node *root, double *result)
         return 0;
     }
 
-    if(root->right == NULL && root->left == NULL) {
+    if(root->left != NULL && root->right == NULL) {
+        if(root->token.type == TOKEN_MINUS) {
+            if(!evaluate(root->left, result))
+                return 0;
+            *result *= -1;
+            return 1;
+        }
+        fprintf(stderr, "[Evaluate Error]: node has one tail!\n");
+        return 0;
+    }
+    else if(root->right == NULL && root->left == NULL) {
         if(root->token.type == TOKEN_NUMBER) {
             *result = root->token.num_value;
             return 1;
@@ -33,13 +43,14 @@ int evaluate(AST_Node *root, double *result)
         fprintf(stderr, "[Evaluate Error]: node has no tails!\n");
         return 0;
     }
-
-    if(!evaluate(root->left, result))
-        return 0;
-    a = *result;
-    if(!evaluate(root->right, result))
-        return 0;
-    b = *result;
+    else if(root->right != NULL && root->left != NULL) {
+        if(!evaluate(root->left, result))
+            return 0;
+        a = *result;
+        if(!evaluate(root->right, result))
+            return 0;
+        b = *result;
+    }
 
     switch(root->token.type) {
         case TOKEN_PLUS:
