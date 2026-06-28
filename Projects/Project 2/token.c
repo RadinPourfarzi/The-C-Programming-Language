@@ -21,11 +21,10 @@ Tokenizer *init_tokenizer(const char *s)
 
 void free_tokenizer(Tokenizer *t)
 {
-    if(t->input != NULL) {
-        free(t->input);
-        t->input = NULL;
+    if(t != NULL) {
+        free(t);
+        t = NULL;
     }
-    t->position = 0;
 }
 
 Token next_token(Tokenizer *t)
@@ -45,6 +44,7 @@ Token next_token(Tokenizer *t)
     current_char = TZR_POS(t);
     next_char = t->input[t->position + 1];
     
+    /*  Turning string input to double. */
     if (isdigit((unsigned char)current_char) || (current_char == '.' && isdigit((unsigned char)next_char))) {
         char *start_ptr;
         char *end_ptr;
@@ -61,6 +61,7 @@ Token next_token(Tokenizer *t)
         return tmp;
     }
 
+    /*  Checking each non-numeric token. */
     switch(TZR_POS(t)) {
         case '+':
             tmp.type = TOKEN_PLUS;

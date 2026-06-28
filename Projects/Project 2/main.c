@@ -9,26 +9,61 @@
 #include "parser.h"
 #include "AST.h"
 #include "evaluate.h"
+#include "buffer.h"
 
 int main(int argc, char *argv[])
 {
     Tokenizer *tokenizer;
     Parser *parser;
     AST_Node *head;
-    double *result;
+    FileBuffer *file_reader;
+
+    double result;
     int error;
 
-    printf("%s\n", argv[1]);
-    tokenizer = init_tokenizer(argv[1]);
-    parser = init_parser(tokenizer);
+    file_reader = start_buffer(&error);
+    if(error == -1) {
+        fprintf(stderr, "[Runtime Error]: Error starting Buffer!\n");
+        return 1;
+    }
+    while((error = get_line(0, file_reader)) == 1) {
+        if((tokenizer = init_tokenizer(file_reader->buffer)) == NULL) {
+            fprintf(stderr, "[Runtime Error]: Error initializing tokenizer!\n");
+            return 1;
+        }
+        if((parser = init_parser(tokenizer)) == NULL) {
+            fprintf(stderr, "[Runtime Error]: Error initializing parser!\n");
+            return 1;
+        }
+        if((head = parse(parser)) == NULL) {
+            fprintf(stderr, "[Parsing Error]\n");
+            free_buffer(file_reader);
+            free_tokenizer(tokenizer);
+            free_parser(parser);
+            free_ast(head);
+            continue;
+        }
+        if(!evaluate(head, &result)) {
+            fprintf(stderr, "[calculation error]\n");
+            free_buffer(file_reader);
+            free_tokenizer(tokenizer);
+            free_parser(parser);
+            free_ast(head);
+            continue;
+        }
+        printf("%f\n", result);
 
-    head = parse(parser);
+        free_buffer(file_reader);
+        free_tokenizer(tokenizer);
+        free_parser(parser);
+        free_ast(head);
 
-    result = (double *)malloc(sizeof(double));
-
-    error = evaluate(head, result);
-
-    printf("%f\n%d\n", *result, error);
+        file_reader = start_buffer(&error);
+        if(error == -1) {
+            fprintf(stderr, "[Runtime Error]: Error starting Buffer!\n");
+            return 1;
+        }
+    }
 
     return 0;
 }
