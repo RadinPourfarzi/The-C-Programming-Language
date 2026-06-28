@@ -11,5 +11,6 @@ typedef struct parser_data {
 
 Parser *init_parser(Tokenizer *t);
 void free_parser(Parser *p);
+AST_Node *parse(Parser *p);
 
 #endif

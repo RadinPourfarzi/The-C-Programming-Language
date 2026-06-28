@@ -35,16 +35,13 @@ AST_Node *parse(Parser *p)
 {
     AST_Node *root;
 
-    root = assign(p);
-
-    if(root == NULL)
+    if((root = assign(p)) == NULL)
         return NULL;
     
     if(p->current_token.type != TOKEN_END) {
         free_ast(root);
         return NULL;
     }
-
     return root;
 }
 
@@ -52,33 +49,36 @@ AST_Node *assign(Parser *p)
 {
     AST_Node *left;
     AST_Node *right;
+    Token current_t;
 
-    left = expression(p);
+    if((left = expression(p)) == NULL)
+        return NULL;
 
-    if(p->current_token.type != TOKEN_ASSIGN)
+    if(p->current_token.type != TOKEN_ASSIGN) {
         return left;
+    }
     
     if(left->token.type != TOKEN_VARIABLE)
         return NULL;
     
-    Token current_t;
     current_t = p->current_token;
 
     advance(p);
 
-    right = assign(p);
+    if((right = assign(p)) == NULL)
+        return NULL;
 
     left = create_node(current_t, left, right);
-
     return left;
 }
 
 AST_Node *expression(Parser *p)
-{
+{;
     AST_Node *left;
     AST_Node *right;
 
-    left = term(p);
+    if((left = term(p)) == NULL)
+        return NULL;
 
     while(p->current_token.type == TOKEN_PLUS || p->current_token.type == TOKEN_MINUS) {
         Token current_t;
@@ -86,11 +86,11 @@ AST_Node *expression(Parser *p)
 
         advance(p);
 
-        right = term(p);
+        if((right = term(p)) == NULL)
+            return NULL;
 
         left = create_node(current_t, left, right);
     }
-
     return left;
 }
 
@@ -99,7 +99,8 @@ AST_Node *term(Parser *p)
     AST_Node *left;
     AST_Node *right;
 
-    left = primary(p);
+    if((left = primary(p)) == NULL)
+        return NULL;
 
     while(p->current_token.type == TOKEN_MULTIPLY || p->current_token.type == TOKEN_DIVIDE || p->current_token.type == TOKEN_MODULO) {
         Token current_t;
@@ -107,11 +108,11 @@ AST_Node *term(Parser *p)
 
         advance(p);
 
-        right = primary(p);
+        if((right = primary(p)) == NULL)
+            return NULL;
 
         left = create_node(current_t, left, right);
     }
-
     return left;
 }
 /*
@@ -138,20 +139,19 @@ AST_Node *primary(Parser *p)
         advance(p);
 
         node = create_node(current_t, NULL, NULL);
-
         return node;
     }
 
     if (p->current_token.type == TOKEN_LEFT_PAREN) {
         advance(p);
 
-        node = assign(p);
+        if((node = assign(p)) == NULL)
+            return NULL;
 
         if (p->current_token.type != TOKEN_RIGHT_PAREN)
             return NULL;
 
         advance(p);
-
         return node;
     }
 
