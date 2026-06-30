@@ -1,6 +1,7 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
+#define MAX_TOKEN_NAME                  16
 #define TZR_POS(tokenizer)              ((tokenizer)->input[(tokenizer)->position])
 
 typedef enum {
@@ -21,6 +22,7 @@ typedef enum {
 typedef struct token_value_identifier {
     Token_Type type;
     double num_value;
+    char name[MAX_TOKEN_NAME];
 } Token;
 
 typedef struct tokenizer_metadata {

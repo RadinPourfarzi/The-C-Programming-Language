@@ -155,13 +155,14 @@ AST_Node *primary(Parser *p)
 
     node = NULL;
 
-    if(p->current_token.type == TOKEN_NUMBER) {
+    if(p->current_token.type == TOKEN_NUMBER || p->current_token.type == TOKEN_VARIABLE) {
         Token current_t;
         current_t = p->current_token;
 
         advance(p);
 
         node = create_node(current_t, NULL, NULL);
+
         return node;
     }
 

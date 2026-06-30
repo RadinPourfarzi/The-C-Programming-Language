@@ -14,7 +14,7 @@ typedef struct file_buffer_data {
 }   FileBuffer;
 
 int get_line(int fd, FileBuffer *file_reader);
-FileBuffer *start_buffer(int *error_status);
+FileBuffer *init_buffer(int *error_status);
 void free_buffer(FileBuffer *file_reader);
 
 #endif

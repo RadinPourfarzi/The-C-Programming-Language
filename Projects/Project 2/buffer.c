@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-FileBuffer *start_buffer(int *error_status)
+FileBuffer *init_buffer(int *error_status)
 {   
     FileBuffer *file_reader;
 
