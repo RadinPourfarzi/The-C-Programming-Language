@@ -27,6 +27,17 @@ void free_tokenizer(Tokenizer *t)
     }
 }
 
+int copy_token(Token *destination, Token *source)
+{
+    if(destination == NULL || source == NULL)
+        return 0;
+    if((strcpy(destination->name, source->name)) == NULL)
+        return 0;
+    destination->num_value = source->num_value;
+    destination->type = source->type;
+    return 1;
+}
+
 Token next_token(Tokenizer *t)
 {
     Token tmp;

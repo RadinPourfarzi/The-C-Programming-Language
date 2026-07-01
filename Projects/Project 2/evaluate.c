@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "symtab.h"
+
 int evaluate(AST_Node *root, double *result)
 {
     double a, b;
@@ -20,7 +22,24 @@ int evaluate(AST_Node *root, double *result)
         fprintf(stderr, "[Evaluate Error]: root is at end!\n");
         return 0;
     }
+    
+    if(root->token.type == TOKEN_ASSIGN) {
+        sym_node *sn;
 
+        if(root->left->token.type != TOKEN_VARIABLE) {
+            fprintf(stderr, "[Assignment Error]: Nothing to assign to!\n");
+            return 0;
+        }
+        if(!evaluate(root->right, result))
+            return 0;
+
+        root->left->token.num_value = *result;
+        if((sn = install(&root->left->token)) == NULL) {
+            fprintf(stderr, "[Runtime Error]:evaluate: Error installing token!\n");
+            return 0;
+        }
+        return 1;
+    }
     if(root->left != NULL && root->right == NULL) {
         if(root->token.type == TOKEN_MINUS) {
             if(!evaluate(root->left, result))
@@ -37,7 +56,13 @@ int evaluate(AST_Node *root, double *result)
             return 1;
         }
         if(root->token.type == TOKEN_VARIABLE) {
-            *result = 0;
+            sym_node *sn;
+            printf("Variable name: %s\n", root->token.name);
+            if((sn = lookup(root->token.name)) == NULL) {
+                fprintf(stderr, "[Runtime Error]:evaluate: Failure looking up!\n");
+                return 0;
+            }
+            *result = sn->token.num_value;
             return 1;
         }
         fprintf(stderr, "[Evaluate Error]: node has no tails!\n");

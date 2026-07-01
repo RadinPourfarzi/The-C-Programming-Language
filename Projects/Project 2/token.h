@@ -33,5 +33,6 @@ typedef struct tokenizer_metadata {
 Token next_token(Tokenizer *t);
 Tokenizer *init_tokenizer(const char *s);
 void free_tokenizer(Tokenizer *t);
+int copy_token(Token *destination, Token *source);
 
 #endif
